@@ -5,10 +5,10 @@
 </head>
 <body>
 <label>Drawing tool<select id="toolselect">
+<option value="brush">Brush</option>
 <option value="rect">Rectangle</option>
 <option value="line">Line</option>
 <option value="circle">Circle</option>
-<option value="brush">Brush</option>
 
 </select></label>
 <div>
@@ -29,6 +29,7 @@
     <td><button onclick="fillColor('purple')" style="background-color: purple; height: 20px; width: 20px;"></button></td>
     <td><button onclick="fillColor('brown')" style="background-color: brown; height: 20px; width: 20px;"></button></td>
     <td><button onclick="fillColor('violet')" style="background-color: violet; height: 20px; width: 20px;"></button></td>
+    <td><button onclick="fillColor('white')" style="background-color: white; height: 20px; width: 20px;"></button></td>
     </tr>
   </table>
   
@@ -38,11 +39,12 @@
 <input id="arrToPython" type=button value="arrToPython" onclick = "arrToPython()">
 <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
 
-<script>   
+<script>
 var canvas = document.getElementById('canvas');
 var context = canvas.getContext('2d');
 // this is important, otherwise canvas will have rgb 0,0,0 instead of 255, 255, 255
-context.fillStyle="#FFFFFF";
+// context.fillStyle="#FFFFFF";
+context.fillStyle="#000000";
 context.fillRect(0, 0, canvas.width, canvas.height);
 var canvas1 = document.getElementById('canvas1');
 var context1 = canvas1.getContext('2d');
@@ -56,6 +58,13 @@ var sideX;
 var sideY;
 var select;
 var currentColor; 
+
+// For brush drawing
+var clickX = new Array();
+var clickY = new Array();
+var clickDrag = new Array();  // So it would not draw on click 
+var paint;
+// End of for brush
 
 var data = {"line":[], "rect":[], "circle":[]}
 
@@ -75,6 +84,11 @@ canvas.addEventListener('mousedown', function(evt) {
         select = 1;
         beginX = mousePos.x;
         beginY = mousePos.y;
+        if (toolselect.value == 'brush'){
+            clickX.push(beginX);
+            clickY.push(beginY);
+            clickDrag.push(false);
+        }
 }, false);
 
 canvas.addEventListener('mousemove', function(evt) {
@@ -92,14 +106,23 @@ canvas.addEventListener('mousemove', function(evt) {
         if (select && toolselect.value == 'circle' ) {
             radius = mousePos.x-beginX;
             drawCircle(beginX, beginY, radius);
-        }     
+        }
+        if (select && toolselect.value == 'brush' ) {
+            // radius = mousePos.x-beginX;dc
+            var mousePos = getMousePos(canvas, evt);
+            beginX = mousePos.x;
+            beginY = mousePos.y;
+            clickX.push(beginX);
+            clickY.push(beginY);
+            clickDrag.push(true)
+            drawBrush();
+        }
 }, false);
       
 canvas.addEventListener('mouseup', function(evt) {
         var mousePos = getMousePos(canvas, evt);
         select = 0;
-        context1.drawImage(canvas,0,0);
-         
+        // context1.drawImage(canvas,0,0);
         if (toolselect.value == 'line') {
             data.line.push({"beginx":beginX, "beginy":beginY, "endx":endX, "endy":endY, "color":currentColor}); 
         } 
@@ -108,6 +131,11 @@ canvas.addEventListener('mouseup', function(evt) {
         } 
         if (toolselect.value == 'circle') {
             data.circle.push({"beginx":beginX, "beginy":beginY, "radius":radius, "color":currentColor});  
+        }
+        if (toolselect.value == 'brush') {
+            var clickX = new Array();
+            var clickY = new Array();
+            var clickDrag = new Array()
         }
         
 }, false);
@@ -155,19 +183,19 @@ function arrToPython() {
 
 function saveImage() {
     if(imagename.value=="")
-		alert("Image name cannot be empty") ; 
-	else {
+        alert("Image name cannot be empty") ; 
+    else {
         $.post("/"+imagename.value,{imagename:imagename.value, string:JSON.stringify(data)});
-		alert("saved");
-	}
+        alert("saved");
+    }
 }
 
 // function loadImage() {
 //     if(imagename.value=="")
-// 		alert("Image name cannot be empty");
-// 	else {
-// 		document.location.href="/"+imagename.value;	
-// 	}
+//      alert("Image name cannot be empty");
+//  else {
+//      document.location.href="/"+imagename.value; 
+//  }
 // }
 
 function clearCanvas() {
@@ -184,17 +212,17 @@ function fillColor(color) {
 function getMousePos(canvas, evt) {
     if (evt.pageX != undefined && evt.pageY != undefined) {
         var x = evt.pageX;
-		var y = evt.pageY;
-	}
-	else {
-	    x = evt.clientX + document.body.scrollLeft +
-				document.documentElement.scrollLeft;
-		y = evt.clientY + document.body.scrollTop +
-				document.documentElement.scrollTop;
+        var y = evt.pageY;
+    }
+    else {
+        x = evt.clientX + document.body.scrollLeft +
+                document.documentElement.scrollLeft;
+        y = evt.clientY + document.body.scrollTop +
+                document.documentElement.scrollTop;
     }
 
-	x -= canvas.offsetLeft;
-	y -= canvas.offsetTop;
+    x -= canvas.offsetLeft;
+    y -= canvas.offsetTop;
     return {
         x: x,
         y: y
@@ -233,7 +261,22 @@ function drawCircle(x1, y1, r) {
 }
 
 function drawBrush() {
-    
+    // context.clearRect(0, 0, context.canvas.width, context.canvas.height); // Clears the canvas
+    // context.strokeStyle = currentColor;
+    context.strokeStyle = 'white';
+    context.lineJoin = "round";
+    context.lineWidth = 20;
+    for (let i=0; i < clickX.length; i++) {
+        context.beginPath();
+        if (clickDrag[i] && i){
+            context.moveTo(clickX[i-1], clickY[i-1]);
+        } else {
+            context.moveTo(clickX[i]-1, clickY[i])
+        }
+        context.lineTo(clickX[i], clickY[i])
+        context.closePath();
+        context.stroke();
+    }
 }
 
 function drawAll() {
