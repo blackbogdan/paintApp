@@ -1,5 +1,6 @@
 <!doctype html>
 <html>
+<link rel="stylesheet" media="screen" href = "{{ url_for('static', filename='bootstrap.min.css') }}">
 <head>
 <title>Paint</title>
 </head>
@@ -16,7 +17,7 @@
     <input id="imagename" name="imagename">
     <input id="save" type=button value="save" onclick = "saveImage()">
     <input id="load" type=button value="load" onclick = "loadImage()">
-    <input id="clear" type=button value="Clear" onclick = "clearCanvas()"  >
+    <input id="clear" type=button class="btn btn-info" value="Clear" onclick = "clearCanvas()"  >
 </div>
 </body>
 <table id="table" >
@@ -30,13 +31,17 @@
     <td><button onclick="fillColor('brown')" style="background-color: brown; height: 20px; width: 20px;"></button></td>
     <td><button onclick="fillColor('violet')" style="background-color: violet; height: 20px; width: 20px;"></button></td>
     <td><button onclick="fillColor('white')" style="background-color: white; height: 20px; width: 20px;"></button></td>
+    <td><button onclick="fillColor('black')" style="background-color: black; height: 20px; width: 20px;"></button></td>
     </tr>
   </table>
   
-<canvas id="canvas1" width="28" height="28" style="border:1px solid #000000;position: absolute;top: 100px;left: 400px; "></canvas>
-<canvas id="canvas" width="500" height="500" style="border:2px solid #000000;position: absolute;top: 100px;left: 400px; "></canvas>
+<canvas id="canvas1" width="300" height="300" style="border:1px solid #FF0000;position: absolute;top: 150px;left: 450px; "></canvas>
+<canvas id="canvas" width="400" height="400" style="border:2px solid #000000;position: absolute;top: 100px;left: 400px; "></canvas>
 <input id="logArr" type=button value="logArr" onclick = "logArr()">
-<input id="arrToPython" type=button value="arrToPython" onclick = "arrToPython()">
+<input id="arrToPython" class="btn btn-info" type=button value="Analyse Image" onclick = "arrToPython()">
+<label><a href="result">Go to "Results" page</a></label>
+
+<h4 id="calculatedResult" >Will be replaced</h4>
 <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
 
 <script>
@@ -57,7 +62,7 @@ var endY;
 var sideX;
 var sideY;
 var select;
-var currentColor; 
+var currentColor = 'white';  // initialazie the default color
 
 // For brush drawing
 var clickX = new Array();
@@ -167,17 +172,18 @@ function arrToPython() {
     for (var i = 0; i < data.length; i += 4) {
         arr.push(data[i], data[i+1], data[i+2]);
     }
-    // console.log(JSON.stringify(arr))
-    // console.log(typeof(JSON.stringify(arr)))
-    // console.log('array type:', typeof(arr))
+
     $.ajax({
-        type: 'POST',
-        url: 'http://localhost:5000/',
-        data: JSON.stringify(arr),
-        // data: arr,
-    }).done(function(){
-        console.log('sent');
-    })
+      url: "{{ url_for('savingImage') }}",
+      type: "POST",
+      data: {jsarr: JSON.stringify(arr)},
+      success: function(response) {
+        $('#calculatedResult').text(`Predicted value: ${response}`)
+      },
+      error: function(err) {
+        $('#calculatedResult').text(`Something went wrong on server side`)
+      }
+    });
 }
 
 
@@ -199,14 +205,26 @@ function saveImage() {
 // }
 
 function clearCanvas() {
-    context.fillStyle="#FFFFFF";
+    context.fillStyle="#000000";
     context.fillRect(0, 0, canvas.width, canvas.height);
+    if (clickX.length !== 0) {
+        clickX = new Array();
+        clickY = new Array();
+        clickDrag = new Array();
+    }
 }
 
 function fillColor(color) {
     context.fillStyle = color;
     context.strokeStyle = color;
     currentColor = color;
+    if (clickX.length !== 0 ) {
+        // We used brush. In order to change color without modifying existing brush drawn image 
+        // Let's update 
+        clickX = new Array();
+        clickY = new Array();
+        clickDrag = new Array();
+    }
 }
 
 function getMousePos(canvas, evt) {
@@ -263,7 +281,7 @@ function drawCircle(x1, y1, r) {
 function drawBrush() {
     // context.clearRect(0, 0, context.canvas.width, context.canvas.height); // Clears the canvas
     // context.strokeStyle = currentColor;
-    context.strokeStyle = 'white';
+    context.strokeStyle = currentColor;
     context.lineJoin = "round";
     context.lineWidth = 20;
     for (let i=0; i < clickX.length; i++) {
