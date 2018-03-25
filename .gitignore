@@ -1,0 +1,8 @@
+*.png
+*.jpg
+ml/.ipynb_checkpoints/*
+ml/__pycache__/*
+ml/*.jpg
+ml/*.ipynb
+ml/*.zip
+ml/*.csv
