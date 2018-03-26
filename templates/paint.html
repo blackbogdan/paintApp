@@ -1,10 +1,13 @@
 <!doctype html>
 <html>
 <link rel="stylesheet" media="screen" href = "{{ url_for('static', filename='bootstrap.min.css') }}">
+<link rel="stylesheet" media="screen" href = "{{ url_for('static', filename='bogdan.css') }}">
 <head>
 <title>Paint</title>
 </head>
 <body>
+<div id="wrapper1">
+</div>
 <label>Drawing tool<select id="toolselect">
 <option value="brush">Brush</option>
 <option value="rect">Rectangle</option>
@@ -35,8 +38,12 @@
     </tr>
   </table>
   
-<canvas id="canvas1" width="300" height="300" style="border:1px solid #FF0000;position: absolute;top: 150px;left: 450px; "></canvas>
-<canvas id="canvas" width="400" height="400" style="border:2px solid #000000;position: absolute;top: 100px;left: 400px; "></canvas>
+<!-- <canvas id="canvas1" width="300" height="300" style="border:1px solid #FF0000;position: absolute;top: 150px;left: 450px; "></canvas>
+<canvas id="canvas" width="400" height="400" style="border:2px solid #000000;position: absolute;top: 100px;left: 400px; "></canvas> -->
+<div id="wrapper">
+    <canvas id="canvas2"></canvas>
+    <canvas id="canvas" ></canvas>
+</div>
 <input id="logArr" type=button value="logArr" onclick = "logArr()">
 <input id="arrToPython" class="btn btn-info" type=button value="Analyse Image" onclick = "arrToPython()">
 <label><a href="result">Go to "Results" page</a></label>
@@ -51,8 +58,8 @@ var context = canvas.getContext('2d');
 // context.fillStyle="#FFFFFF";
 context.fillStyle="#000000";
 context.fillRect(0, 0, canvas.width, canvas.height);
-var canvas1 = document.getElementById('canvas1');
-var context1 = canvas1.getContext('2d');
+var canvas2 = document.getElementById('canvas2');
+var context2 = canvas2.getContext('2d');
 
 var beginX;
 var beginY;
@@ -239,8 +246,18 @@ function getMousePos(canvas, evt) {
                 document.documentElement.scrollTop;
     }
 
-    x -= canvas.offsetLeft;
-    y -= canvas.offsetTop;
+    // x -= canvas.offsetLeft;
+    // y -= canvas.offsetTop;
+    // console.log('js returned', x, y)
+    a = $('#canvas').mousemove(function(evt){
+        // console.log('jquery returned', evt.pageX, evt.pageY)
+    })
+
+
+    // return {
+    //     x: right,
+    //     y: top
+    // };    
     return {
         x: x,
         y: y

@@ -10,10 +10,10 @@ from ml.Neural_Network.TrainingNN import NeuralNetwork as NN
 import numpy as np
 import os
 
-
-
 app = Flask(__name__)
 app.secret_key = 'some_secret'
+
+
 @app.route('/', methods=['POST', 'GET'])
 def savingImage():
     if request.method == 'GET':
@@ -23,14 +23,18 @@ def savingImage():
         data = request.form.get('jsarr')
         lst = data[1:-1].split(',')
 
-        np_arr = np.array(lst, dtype=int)  #create np array and convert data type to intiger
+        # create np array and convert data type to intiger
+        np_arr = np.array(lst, dtype=int)
         # BOGDAN FIXME: need to canvas width and height dynamically?
         np_image = np_arr.reshape([400, 400, 3])  # reshape it to minst
 
-        np_image = np_image.astype(np.uint8) #to avoid error: (-215) depth == CV_8U || depth == CV_16U || depth == CV_32F in function cvtColor
+        # to avoid error: (-215) depth == CV_8U || depth == CV_16U || depth == CV_32F in function cvtColor
+        np_image = np_image.astype(np.uint8)
 
-        small_28_by_28 = cv2.resize(np_image, (28, 28), interpolation = cv2.INTER_AREA) # works better, than linear
-        rgb = cv2.cvtColor(small_28_by_28, cv2.COLOR_BGR2RGB)  
+        # works better, than linear
+        small_28_by_28 = cv2.resize(
+            np_image, (28, 28), interpolation=cv2.INTER_AREA)
+        rgb = cv2.cvtColor(small_28_by_28, cv2.COLOR_BGR2RGB)
         gray = cv2.cvtColor(small_28_by_28, cv2.COLOR_BGR2GRAY)
         print(rgb.size)
         print(gray.size)
@@ -41,8 +45,8 @@ def savingImage():
         # after_this_request(render_template('query_result.html'))
         # print(url_for(prediction_result))
 
-            # return 'done'
-                    # redirect('/result/')
+        # return 'done'
+        # redirect('/result/')
         # return after_this_request(redirect('/result/'))
         # return redirect('/result/')
         # flash('Is it flassshed?')
@@ -51,6 +55,19 @@ def savingImage():
         return str(list_of_predictions[1])
 
 
+@app.context_processor
+def override_url_for():
+    return dict(url_for=dated_url_for)
+
+
+def dated_url_for(endpoint, **values):
+    if endpoint == 'static':
+        filename = values.get('filename', None)
+        if filename:
+            file_path = os.path.join(app.root_path,
+                                     endpoint, filename)
+            values['q'] = int(os.stat(file_path).st_mtime)
+    return url_for(endpoint, **values)
 
 
 @app.route('/result/')
