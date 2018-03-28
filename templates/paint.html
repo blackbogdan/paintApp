@@ -2,34 +2,34 @@
 <html>
 <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.js">// for dropdowns to work</script>
+<!-- <script type="text/javascript" src="{{ url_for('static', filename='bootstrap.min.js') }}"></script> -->
 <script type="text/javascript" src="{{ url_for('static', filename='bootstrap.min.js') }}"></script>
-<link rel="stylesheet" media="screen" href = "{{ url_for('static', filename='bootstrap.min.css') }}">
+<link rel="stylesheet" media="screen" href = "{{ url_for('static', filename='bootstrap.css') }}">
+<!-- <link rel="stylesheet" media="screen" href = "{{ url_for('static', filename='bootstrap.min.css') }}"> -->
 <head>
 <title>Paint</title>
 </head>
-<body>
-<label>Drawing tool<select id="toolselect">
-<option value="brush">Brush</option>
-<option value="rect">Rectangle</option>
-<option value="line">Line</option>
-<option value="circle">Circle</option>
-</select></label>
-
-<div class="dropdown">
-  <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-    Dropdown
-    <span class="caret"></span>
-  </button>
-  <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-    <li><a href="#">Action</a></li>
-    <li><a href="#">Another action</a></li>
-    <li><a href="#">Something else here</a></li>
-    <li role="separator" class="divider"></li>
-    <li><a href="#">Separated link</a></li>
-  </ul>
+<body style="background-color: ivory">
+<div class="btn-group">
+    <button type="button" class="btn btn-info" id="toolselect" aria-haspopup="true" aria-expanded="false" value="brush">Brush</button>
+    <button type="button" data-toggle="dropdown" class="btn btn-info dropdown-toggle" aria-haspopup="true" aria-expanded="false"><span class="caret"></span></button>
+    <ul class="dropdown-menu" id="toolsList">
+        <li class="dropdown-item" value="brush">Brush</li>
+        <li class="dropdown-item" value="rect">Rectangle</li>
+        <li class="dropdown-item" value="line">Line</li>
+        <li class="dropdown-item" value="circle">Circle</li>
+    </ul>
 </div>
+<script>
+// For bootstrap dropdown to behave like toolselect value
+$("#toolsList li").click(function(){
+  var selText = $(this).text();
+  var curValue = $(this).attr('value');
+  $("#toolselect").html(selText);
+  $("#toolselect").attr("value", curValue);
+});
+</script>
 
-<div>
 <label id="imagelabel"> Image name </label>
     <input id="imagename" name="imagename">
     <input id="save" type=button value="save" onclick = "saveImage()">
@@ -60,9 +60,12 @@
 </div>
 
 <div class="btn-group" role="group" aria-label="...">
-  <button type="button" class="btn btn-default">Left</button>
-  <button type="button" class="btn btn-default">Middle</button>
-  <button type="button" class="btn btn-default">Right</button>
+  <button type="button" class="btn btn-primary">Left</button>
+  <button type="button" class="btn btn-primary">Middle</button>
+  <button type="button" class="btn" style="{
+    background-color: #8064A2;
+    border-color: #8064A2;
+}">Right</button>
 </div>
 <div>
 <canvas id="canvas1" width="300" height="300" style="border:1px solid #FF0000;position: absolute;top: 150px;left: 450px; "></canvas>
