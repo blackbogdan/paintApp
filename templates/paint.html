@@ -5,6 +5,7 @@
 <!-- <script type="text/javascript" src="{{ url_for('static', filename='bootstrap.min.js') }}"></script> -->
 <script type="text/javascript" src="{{ url_for('static', filename='bootstrap.min.js') }}"></script>
 <link rel="stylesheet" media="screen" href = "{{ url_for('static', filename='bootstrap.css') }}">
+<link rel="stylesheet" media="screen" href = "{{ url_for('static', filename='custom.css') }}">
 <!-- <link rel="stylesheet" media="screen" href = "{{ url_for('static', filename='bootstrap.min.css') }}"> -->
 <head>
 <title>Paint</title>
@@ -36,37 +37,26 @@ $("#toolsList li").click(function(){
     <input id="load" type=button value="load" onclick = "loadImage()">
     <input id="clear" type=button class="btn btn-info" value="Clear" onclick = "clearCanvas()"  >
 </div>
-</body>
-<table id="table" >
-   <tr>
-    <td><button onclick="fillColor('red')" style="background-color: red; height: 20px; width: 20px;"></button></td>
-    <td><button onclick="fillColor('green')" style="background-color: green; height: 20px; width: 20px;"></button></td>
-    <td><button onclick="fillColor('blue')" style="background-color: blue; height: 20px; width: 20px;"></button></td>
-    <td><button onclick="fillColor('yellow')" style="background-color: yellow; height: 20px; width: 20px;"></button></td>
-    <td><button onclick="fillColor('pink')" style="background-color: pink; height: 20px; width: 20px;"></button></td>
-    <td><button onclick="fillColor('purple')" style="background-color: purple; height: 20px; width: 20px;"></button></td>
-    <td><button onclick="fillColor('brown')" style="background-color: brown; height: 20px; width: 20px;"></button></td>
-    <td><button onclick="fillColor('violet')" style="background-color: violet; height: 20px; width: 20px;"></button></td>
-    <td><button onclick="fillColor('white')" style="background-color: white; height: 20px; width: 20px;"></button></td>
-    <td><button onclick="fillColor('black')" style="background-color: black; height: 20px; width: 20px;"></button></td>
-    </tr>
-</table>
-
 <div>
+    <div class="btn-group color-select" role="group" aria-label="...">
         {% for color in colors_lst %}
-            <label class="radio-inline">{{ color }}<input type="radio" name="optradio" onclick="fillColor('{{color}}')">
-            </label>
+            {% if color=='white' %}
+                <!-- <make active white color by default> -->
+                <button id="btn-{{ color }}" type="button" value="{{ color }}" class="btn btn-primary active">{{ color }}</button>
+            {%else%}
+                <button id="btn-{{ color }}" type="button" value="{{ color }}" class="btn btn-primary">{{ color }}</button>
+            {% endif %}
         {% endfor %}
+    </div>
 </div>
+<script>
+    $('.btn-group.color-select button').on('click', function(){
+        $('.btn-group.color-select .active').toggleClass('active');
+        $(this).toggleClass('active');
+        fillColor($(this).text());
+    });
+</script>
 
-<div class="btn-group" role="group" aria-label="...">
-  <button type="button" class="btn btn-primary">Left</button>
-  <button type="button" class="btn btn-primary">Middle</button>
-  <button type="button" class="btn" style="{
-    background-color: #8064A2;
-    border-color: #8064A2;
-}">Right</button>
-</div>
 <div>
 <canvas id="canvas1" width="300" height="300" style="border:1px solid #FF0000;position: absolute;top: 150px;left: 450px; "></canvas>
 <canvas id="canvas" width="400" height="400" style="border:2px solid #000000;position: absolute;top: 100px;left: 400px; "></canvas>
@@ -79,7 +69,7 @@ $("#toolsList li").click(function(){
 
 <h4 id="calculatedResult" >Will be replaced</h4>
 
-
+</body>
 <script>
 var canvas = document.getElementById('canvas');
 var context = canvas.getContext('2d');
