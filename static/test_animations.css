@@ -1,0 +1,102 @@
+body {
+  padding: 40px;
+}
+#wrapper {
+  width: 100%;
+  text-align: center;
+  margin: auto;
+  left: 0px;
+  right: 0px;
+  top: 0px;
+  bottom: 0px;
+}
+
+/*#=======Animation with css event listener=====*/
+.trigger {
+  display: inline-block;
+  width:100px;
+  height: 100px;
+  border: 20px solid #999;
+  background: #ddd;
+  margin-right: 40px;
+}
+
+.box {
+  display: inline-block;
+  background-color: pink;
+  width: 100px;
+  height: 100px;
+  /*opacity: 1;*/
+  transition: transform 1000ms ease-in-out;
+  /*transition: all 3000ms cubic-bezier(.46,.40,.75,.36); */
+  pointer-events: none;
+  
+}
+
+.trigger:hover .box{
+  /*opacity: 0.3;*/
+  transform: translate(-299px, 50px) rotate(180deg) rotateX(180deg);
+
+}
+
+/*#=======Animation with change of class (needs js, see $(this).toggleClass('clicked')*/
+
+.click-trigger {
+  display: inline-block;
+  width:100px;
+  height: 100px;
+  border: 20px solid #999;
+  background: #ddd;
+}
+
+.click-box {
+  display: inline-block;
+  background-color: pink;
+  width: 100px;
+  height: 82px;
+  transition: transform 1000ms ease-in-out;
+  pointer-events: none;
+}
+
+.click-trigger.clicked .click-box {
+  transform: translate(200px) rotateX(180deg);
+}
+
+
+/*#====================Using Keyframes*/
+.animated-box {
+  background: orange;
+  display: inline-block;
+  width: 300px;
+  height: 100px;
+  position: relative;
+  animation: bogdan_frames 2s ease-in-out 0s infinite alternate;
+}
+.animated-box.is-paused {
+    animation-play-state: paused;
+}
+
+@keyframes bogdan_frames {
+  0% {
+    height: 100px;
+  }
+
+  30% {
+    background: blue;
+  }
+  
+  100% {
+    height: 400px;
+    background: pink;
+  }
+}
+
+/*@keyframes bogdan_frames {
+  from {
+    height: 100px;
+  }
+  to {
+    height: 400px;
+    background: pink;
+  }
+}*/

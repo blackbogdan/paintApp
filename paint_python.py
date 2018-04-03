@@ -65,6 +65,11 @@ def prediction_result():
     return 'done'
 
 
+@app.route('/animations')
+def test_animations():
+    return render_template('animations_test.html')
+
+
 @app.context_processor
 def override_url_for():
     return dict(url_for=dated_url_for)
