@@ -19,7 +19,7 @@ app.secret_key = 'some_secret'
 def savingImage():
     if request.method == 'GET':
         colors = ['white', 'red', 'green', 'blue', 'yellow', 'pink',
-                  'purple', 'violet', 'black']
+                  'purple', 'violet', 'black', 'orange']
         return render_template('paint.html', colors_lst=colors)
     if request.method == 'POST':
         # 1) Get data from post form
