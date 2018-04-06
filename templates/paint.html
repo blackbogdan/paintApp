@@ -10,66 +10,73 @@
 <head>
 <title>Paint</title>
 </head>
-<body style="background-color: ivory">
-<div class="btn-group">
-    <button type="button" class="btn btn-info" id="toolselect" aria-haspopup="true" aria-expanded="false" value="brush">Brush</button>
-    <button type="button" data-toggle="dropdown" class="btn btn-info dropdown-toggle" aria-haspopup="true" aria-expanded="false"><span class="caret"></span></button>
-    <ul class="dropdown-menu" id="toolsList">
-        <li class="dropdown-item" value="brush">Brush</li>
-        <li class="dropdown-item" value="rect">Rectangle</li>
-        <li class="dropdown-item" value="line">Line</li>
-        <li class="dropdown-item" value="circle">Circle</li>
-    </ul>
-</div>
-<script>
-// For bootstrap dropdown to behave like toolselect value
-$("#toolsList li").click(function(){
-  var selText = $(this).text();
-  var curValue = $(this).attr('value');
-  $("#toolselect").html(selText);
-  $("#toolselect").attr("value", curValue);
-});
-</script>
+<body style="background-color: honeydew">
+<div class="global-wrapper">
+    <div class="btn-group tools-list">
+        <span>Choose Your tool: </span>
+        <button type="button" class="btn btn-info" id="toolselect" aria-haspopup="true" aria-expanded="false" value="brush">Brush</button>
+        <button type="button" data-toggle="dropdown" class="btn btn-info dropdown-toggle" aria-haspopup="true" aria-expanded="false"><span class="caret"></span></button>
+        <ul class="dropdown-menu" id="toolsList">
+            <li class="dropdown-item" value="brush">Brush</li>
+            <li class="dropdown-item" value="rect">Rectangle</li>
+            <li class="dropdown-item" value="line">Line</li>
+            <li class="dropdown-item" value="circle">Circle</li>
+        </ul>
+    </div>
+                <script>
+            // For bootstrap dropdown to behave like toolselect value
+            $("#toolsList li").click(function(){
+              var selText = $(this).text();
+              var curValue = $(this).attr('value');
+              $("#toolselect").html(selText);
+              $("#toolselect").attr("value", curValue);
+            });
+            </script>
+    <button id="clear" class="btn btn-info" type='button' onclick = "clearCanvas()">Clear Canvas</button>
+    
+    
+        <div class="btn-group color-select" role="group" aria-label="...">
+            {% for color in colors_lst %}
+                {% if color=='white' %}
+                    <!-- <make active white color by default> -->
+                    <button id="btn-{{ color }}" type="button" value="{{ color }}" class="btn btn-primary active">{{ color }}</button>
+                {%else%}
+                    <button id="btn-{{ color }}" type="button" value="{{ color }}" class="btn btn-primary">{{ color }}</button>
+                {% endif %}
+            {% endfor %}
+        </div>
 
-<label id="imagelabel"> Image name </label>
-    <input id="imagename" name="imagename">
-    <input id="save" type=button value="save" onclick = "saveImage()">
-    <input id="load" type=button value="load" onclick = "loadImage()">
-    <input id="clear" type=button class="btn btn-info" value="Clear" onclick = "clearCanvas()"  >
-</div>
-<div>
-    <div class="btn-group color-select" role="group" aria-label="...">
-        {% for color in colors_lst %}
-            {% if color=='white' %}
-                <!-- <make active white color by default> -->
-                <button id="btn-{{ color }}" type="button" value="{{ color }}" class="btn btn-primary active">{{ color }}</button>
-            {%else%}
-                <button id="btn-{{ color }}" type="button" value="{{ color }}" class="btn btn-primary">{{ color }}</button>
-            {% endif %}
-        {% endfor %}
+    <script>
+        $('.btn-group.color-select button').on('click', function(){
+            $('.btn-group.color-select .active').toggleClass('active');
+            $(this).toggleClass('active');
+            fillColor($(this).text());
+        });
+    </script>
+
+    <div class="canvas-wrapper">
+ <!--        <canvas id="canvas1" width="300" height="300" style="border:1px solid #FF0000;position: absolute;top: 150px;left: 450px; "></canvas>
+        <canvas id="canvas" width="400" height="400" style="border:2px solid #000000;position: absolute;top: 100px;left: 400px; "></canvas> -->
+        <canvas id="canvas1"></canvas>
+        <canvas id="canvas" ></canvas>
+    </div>
+    <div>
+        <input id="logArr" type=button value="logArr" onclick = "logArr()">
+        <input id="arrToPython" class="btn btn-info" type=button value="Analyse Image" onclick = "arrToPython()">
+    </div>
+    <div>
+        <label><a href="result">Go to "Results" page</a></label>
+    </div>
+    <div>
+        <h4 id="calculatedResult" >Will be replaced</h4>
     </div>
 </div>
-<script>
-    $('.btn-group.color-select button').on('click', function(){
-        $('.btn-group.color-select .active').toggleClass('active');
-        $(this).toggleClass('active');
-        fillColor($(this).text());
-    });
-</script>
-
-<div>
-<canvas id="canvas1" width="300" height="300" style="border:1px solid #FF0000;position: absolute;top: 150px;left: 450px; "></canvas>
-<canvas id="canvas" width="400" height="400" style="border:2px solid #000000;position: absolute;top: 100px;left: 400px; "></canvas>
-</div>
-<div>
-<input id="logArr" type=button value="logArr" onclick = "logArr()">
-<input id="arrToPython" class="btn btn-info" type=button value="Analyse Image" onclick = "arrToPython()">
-</div>
-<label><a href="result">Go to "Results" page</a></label>
-
-<h4 id="calculatedResult" >Will be replaced</h4>
-
 </body>
+
+
+
+
+
 <script>
 var canvas = document.getElementById('canvas');
 var context = canvas.getContext('2d');
