@@ -88,27 +88,27 @@ body {
     padding: 10px;
     width: 600px;
 }
+
 .btn-group.tools-list {
     display: flex;
     justify-content: space-around;
 }
+
 .canvas-wrapper {
     display: flex;
+    align-items: center;
     justify-content: center;
-    background-color: pink;
+    background-color: lightblue;
     width: 500px;
     height: 500px;
 }
+
 #clear {
     display: inline-block;  
 }
+
 #canvas1 {
     display: none;
-    width: 300px;
-    height: 300px;
-    border:1px solid #FF0000;
-    /*display: inline-block;*/
-    /*z-index: 10;*/
 }
 
 #canvas {
