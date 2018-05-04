@@ -1,6 +1,6 @@
 version: '3'
 services:
   web_paint_python:
-    image: "python:3.6-alpine"
     build: .
-    ports: "5554:5000"
+    ports: 
+      - "5554:5000"
